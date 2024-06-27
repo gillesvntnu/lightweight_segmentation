@@ -1,0 +1,27 @@
+# Split number of CAMUS dataset to use
+SPLIT_NB: 1
+
+
+TESTING:
+  NB_EPOCHS: 100
+  LOSS: "DICE"
+  OPTIMIZER: "Adam"
+  LR: 0.001
+  DATA_LOADER_PARAMS: { "batch_size": 1, "shuffle": False, "num_workers": 8 }
+
+INFERENCE_TRANSFORM:
+  RESIZE: [256, 256]
+
+MODEL:
+  PATH_TO_MODEL: /home/gillesv/PycharmProjects/lightweight_segmentation/src/experiments/lightweight_unet/20240627-100338/lowest_val_dice.pth
+  # the following parameters must be the same as the ones used during training
+  INPUT_SHAPE: [1,256,256]
+  DEEP_SUPERVISION: True
+  NORMALIZE_INPUT: True
+  NORMALIZE_INTER_LAYER: True
+  ACTIVATION_INTER_LAYER: "mish"
+
+# path to the directory containing the data. See documentation of test.py for more information on the
+# expected structure of this directory
+# See /home/gillesv/data/lightweight_segmentation/preprocessing_output/cv1 for an example the desired structure
+DATA_DIR: '/home/gillesv/data/lightweight_segmentation/preprocessing_output/cv1'

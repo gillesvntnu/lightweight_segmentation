@@ -1,0 +1,35 @@
+TRAINING:
+  NB_EPOCHS: 100
+  LOSS: "DICE&CE_DS" # DS stands for deep supervision. If a DS loss is used, MODEL.DEEP_SUPERVISION must be True
+  OPTIMIZER: "Adam"
+  LR: 0.001
+  PATIENCE: 20
+  DATA_LOADER_PARAMS: { "batch_size": 32, "shuffle": True, "num_workers": 8 }
+
+# The default augmentations below are the ones that gave the best results in the experiments on CAMUS
+AUGMENTATIONS_TRAIN:
+  RESIZE: [256, 256]
+
+  SHIFT_LIMIT: 0.1
+  SCALE_LIMIT: [-0.2, 0.1]
+  ROTATE_LIMIT: 10
+  P_SHIFT_SCALE_ROTATE: 0.5
+
+
+AUGMENTATIONS_VAL:
+  RESIZE: [256, 256]
+
+# relative to CONST.EXPERIMENTS_DIR
+REL_OUT_DIR: "lightweight_unet"
+
+MODEL:
+  INPUT_SHAPE: [1,256,256]
+  DEEP_SUPERVISION: True
+  NORMALIZE_INPUT: True
+  NORMALIZE_INTER_LAYER: True
+  ACTIVATION_INTER_LAYER: "mish"
+
+# path to the directory containing the data. See documentation of train.py for more information on the
+# expected structure of this directory
+# See /home/gillesv/data/lightweight_segmentation/preprocessing_output/cv1 for an example the desired structure
+DATA_DIR: '/home/gillesv/data/lightweight_segmentation/preprocessing_output/cv1'
