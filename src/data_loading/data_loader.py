@@ -67,9 +67,6 @@ class Labeled_dataset(torch.utils.data.Dataset):
             X, y = self.__data_generation(index)
         y = np.squeeze(y)
 
-        if self.augmentations is not None:
-            X, y = augmentations.apply_augmentations((X, y), self.augmentations)
-
         # this is where the actual augmentation happens
         if self.transform is not None:
             transformed = self.transform(image=X, mask=y)
