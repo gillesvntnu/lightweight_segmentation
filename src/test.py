@@ -49,10 +49,19 @@ def test(config_loc, verbose=True):
     print(f'Running on device: {device}')
 
     # get parent directory of the model. This is where the plots will be saved
-    out_dir = "/".join(config["MODEL"]["PATH_TO_MODEL"].split("/")[:-1])
+    if config['OUT_DIR'] is not None and config['OUT_DIR'] != "":
+        out_dir = config['OUT_DIR']
+    else:
+        out_dir = "/".join(config["MODEL"]["PATH_TO_MODEL"].split("/")[:-1])
+
+    out_dir = os.path.join(out_dir, "test_results")
     plot_folder = os.path.join(out_dir, "plots")
+    plot_folder_all = os.path.join(out_dir, "plots_all")
+    plot_folder_box_plots = os.path.join(out_dir, "box_plots")
     print("Saving results to: " + plot_folder)
     os.makedirs(plot_folder, exist_ok=True)
+    os.makedirs(plot_folder_all, exist_ok=True)
+    os.makedirs(plot_folder_box_plots, exist_ok=True)
 
     # get test split
     splits_loc = os.path.join(config['DATA_DIR'],'splits')
@@ -155,7 +164,7 @@ def test(config_loc, verbose=True):
                 pred=predictions[0].squeeze().T,
                 sample_name=f"{file_name}.png",
                 dices=dices,
-                plot_folder=plot_folder,
+                plot_folder=plot_folder_all,
             )
 
             # add losses to list
@@ -190,7 +199,7 @@ def test(config_loc, verbose=True):
 
     utils.boxplot(
         hausdorf_scores,
-        out_dir,
+        plot_folder_box_plots,
         title_hausdorf_scores,
         "Hausdorff distance",
         ["LV", "Myo", "LA"],
@@ -199,7 +208,7 @@ def test(config_loc, verbose=True):
     )
     utils.boxplot(
         dice_scores,
-        out_dir,
+        plot_folder_box_plots,
         title_dice_scores,
         "Dice score",
         ["LV", "Myo", "LA"],
