@@ -5,6 +5,9 @@ This work is the result of the master thesis of Anders Kjelsrud,
 and you should cite his thesis if you use this code.
 At the time of writing his thesis is not yet public. You can find a pdf copy in this repository:
 [masters_thesis_Anders_Kjelsrud.pdf](masters_thesis_Anders_Kjelsrud.pdf)
+Table 4.11 on page 70 is particularly interesting: the number of anatomical outliers for a model trained on
+HUNT4 and tested on CAMUS is halved compared to the baseline U-Net 1. Section 4.11 on page 65 described the
+final model.
 
 The original GitHub repository of Anders can be found here:
 [https://github.com/Anderzz/masters-thesis](https://github.com/Anderzz/masters-thesis).
@@ -36,9 +39,15 @@ Alternatively, [requirements.yaml](requirements.yaml) can be used to create a co
 
 See [src/inference.py](src/inference.py) for an example of how to use the model for inference.
 
-A model trained on CAMUS can be found at:
-[/home/gillesv/PycharmProjects/lightweight_segmentation/src/experiments/lightweight_unet/trained/lowest_val_dice.pth](/home/gillesv/PycharmProjects/lightweight_segmentation/src/experiments/lightweight_unet/trained/lowest_val_dice.pth)
-on cius-compute.
+### Trained models
+The following trained models are available on cius-compute:
+- HUNT4: [/home/gillesv/PycharmProjects/lightweight_segmentation/src/experiments/lightweight_unet/HUNT4_a2c_a4c/lowest_val_dice.pth](/home/gillesv/PycharmProjects/lightweight_segmentation/src/experiments/lightweight_unet/HUNT4_a2c_a4c/lowest_val_dice.pth)
+
+- CAMUS (first cv split): [/home/gillesv/PycharmProjects/lightweight_segmentation/src/experiments/lightweight_unet/camus/lowest_val_dice.pth](/home/gillesv/PycharmProjects/lightweight_segmentation/src/experiments/lightweight_unet/camus/lowest_val_dice.pth)
+
+
+
+
 
 ## TRAINING
 
@@ -62,7 +71,7 @@ channel is the image and the second channel is the ground truth segmentation mas
 The files train.txt, val.txt and test.txt contain the names of the patients that should be used for 
 training, validation and testing respectively, with each line containing the name of one patient.
 See 
-[/home/gillesv/data/lightweight_segmentation/preprocessing_output/CAMUS_cv1](/home/gillesv/data/lightweight_segmentation/preprocessing_output/CAMUS_cv1)
+[/home/gillesv/data/lightweight_segmentation/preprocessing_output/HUNT4_a2c_a4c_](/home/gillesv/data/lightweight_segmentation/preprocessing_output/HUNT4_a2c_a4c)
 on cius-compute for an example.
 
 You then need to specify the path to the dataset_folder in the DATA_DIR attribute in the 
