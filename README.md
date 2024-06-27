@@ -86,7 +86,7 @@ export PYTHONPATH=.
 python src/test.py
 ```
 
-The testing script will create a 'plots' folder in the same directory as the model with results.
+The testing script will create a 'test_results' folder in the same directory as the model with results.
 
 
 

@@ -1,7 +1,3 @@
-# Split number of CAMUS dataset to use
-SPLIT_NB: 1
-
-
 TESTING:
   NB_EPOCHS: 100
   LOSS: "DICE"
@@ -19,6 +15,9 @@ MODEL:
   NORMALIZE_INPUT: True
   NORMALIZE_INTER_LAYER: True
   ACTIVATION_INTER_LAYER: "mish"
+
+OUT_DIR: "" # specify this if you want to save the predictions to a directory.
+              # If None, the predictions will be saved in the parent directory of MODEL.PATH_TO_MODEL
 
 # path to the directory containing the data. See documentation of test.py for more information on the
 # expected structure of this directory
