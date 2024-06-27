@@ -69,8 +69,6 @@ class LightWeightSegmentationModel(torch.nn.Module):
             if batch_input.shape[1:] != self.input_shape:
                 raise ValueError(f"Input shape should be {self.input_shape}, got {batch_input.shape[1:]}")
             # resize the images to the input shape of the model
-            resize_shape = [batch_input.shape[0], *self.input_shape]
-            batch_input =skimage.transform.resize(batch_input, resize_shape)
             batch_input = torch.tensor(batch_input).float()
         elif isinstance(batch_input, torch.Tensor):
             if len(batch_input.shape) == 3:
@@ -80,11 +78,6 @@ class LightWeightSegmentationModel(torch.nn.Module):
                 raise ValueError(f"Unsupported input shape: {batch_input.shape}")
             if batch_input.shape[1:] != torch.Size(self.input_shape):
                 raise ValueError(f"Input shape should be {self.input_shape}, got {list(batch_input.shape[1:])}")
-            # resize the images to the input shape of the model
-            #resize_shape = [batch_input.shape[0], *self.input_shape]
-            batch_input = torch.nn.functional.interpolate(batch_input, size=self.input_shape[1:], mode='bilinear',
-                                                          align_corners=False).float()
-
         return batch_input
 
 
@@ -104,13 +97,13 @@ class LightWeightSegmentationModel(torch.nn.Module):
 
 if __name__ == "__main__":
 
-    # model trained on CAMUS
+    # model trained on HUNT4 ( on cius-compute)
     trained_model_path =\
-        '/home/gillesv/PycharmProjects/lightweight_segmentation/src/experiments/lightweight_unet/trained/lowest_val_dice.pth'
+        '/home/gillesv/PycharmProjects/lightweight_segmentation/src/experiments/lightweight_unet/HUNT4_a2c_a4c/lowest_val_dice.pth'
 
-    # sample from CAMUS
+    # sample from HUNT4 ( on cius-compute)
     sample_path = \
-        '/home/gillesv/data/lightweight_segmentation/preprocessing_output/CAMUS_cv1/numpy_files/patient0002/patient0002_2CH_ED.npy'
+        '/home/gillesv/data/lightweight_segmentation/datasets/HUNT4_a2c_a4c/numpy_files/0004/HAND800S_US-2D_109.npy'
     # The sample has form (us_image, anno) where us_image is the ultrasound image and anno is the segmentation mask
 
     # load trained model
@@ -132,9 +125,9 @@ if __name__ == "__main__":
     # the ultrasound image and segmentaitons are of shape (width, depth)
     # we transpose them to (depth, width) for plotting
     utils.plot_segmentation(
-        us_image=x[0].T,
-        anno=y.T,
-        pred=predictions[0].squeeze().T,
+        us_image=x[0],
+        anno=y,
+        pred=predictions[0].squeeze(),
         sample_name="sample.png",
         show=True
     )

@@ -31,6 +31,5 @@ MODEL:
 
 # path to the directory containing the data. See documentation of train.py for more information on the
 # expected structure of this directory
-# See /home/gillesv/data/lightweight_segmentation/preprocessing_output/CAMUS_cv1 for an example the desired structure
 # CHANGE THIS TO WHERE YOU STORED YOUR DATASET IN THE CORRECT FOLDER STRUCTURE (see readme)
-DATA_DIR: '/home/gillesv/data/lightweight_segmentation/preprocessing_output/CAMUS_cv1'
+DATA_DIR: '/home/gillesv/data/lightweight_segmentation/datasets/HUNT4_a2c_a4c'

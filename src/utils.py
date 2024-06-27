@@ -312,18 +312,39 @@ def plot_worst_predictions(worst_queue, plot_folder):
     :param plot_folder: str
         the folder to save the plots
     """
-    worst_folder = os.path.join(plot_folder, "worst")
+    worst_folder = os.path.join(plot_folder, "worst_cases_plots")
     os.makedirs(worst_folder, exist_ok=True)
     while not worst_queue.empty():
         loss, (input_img, label, prediction, dices, idx) = worst_queue.get()
         plot_segmentation(
-            input_img.squeeze().T,
-            label.squeeze().T,
-            prediction.squeeze().T,
+            input_img.squeeze(),
+            label.squeeze(),
+            prediction.squeeze(),
             f"worst_{idx}.png",
             dices,
             worst_folder,
         )
+
+def handle_queue(worst_queue, item, maxsize=15):
+    """
+    Handle the updates to the priority queue of worst predictions.
+    :param worst_queue: queue.PriorityQueue
+        the priority queue to update
+    :param item: tuple
+        the item to insert into the queue (loss, data)
+    :param maxsize: int, optional
+        the maximum size of the queue
+    """
+    if worst_queue.qsize() < maxsize:
+        worst_queue.put(item)
+    else:
+        # If the new item has a worse (higher) loss, add it to the queue
+        max_item = worst_queue.get()
+        if item[0] > max_item[0]:
+            worst_queue.put(item)
+        else:
+            worst_queue.put(max_item)
+
 
 #### preprocessing utils ####
 
@@ -1044,4 +1065,19 @@ def get_loss(loss_name, device='cpu', verbose=True):
     return loss_fn
 
 
+## preprocessing utils ##
 
+def save_splits(splits, out_loc):
+    """
+    Save the splits to a file
+    :param splits: dict
+        A dictionary with the split names as keys and the split as values, e.g.
+        {'train': ['patient1', 'patient2',...], 'val': ['patient3',...], 'test': ['patient4',...]}
+    """
+    if not os.path.exists(out_loc):
+        os.makedirs(out_loc)
+    for split_name, split in splits.items():
+        split_loc = os.path.join(out_loc, split_name)
+        with open(split_loc+'.txt', 'w') as f:
+            for patient in split:
+                f.write(patient + '\n')

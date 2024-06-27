@@ -265,7 +265,6 @@ def train(config_loc, verbose=True):
     dataset_train = data_loader.Labeled_dataset(
         train_set,
         numpy_files_loc,
-        augmentation_params=config["TRAINING"]["AUGMENTATION_PARAMS"],
         transform=train_transform,
     )
     dataloader_train = torch.utils.data.DataLoader(dataset_train, **data_loader_params)
@@ -276,7 +275,6 @@ def train(config_loc, verbose=True):
     dataset_validation = data_loader.Labeled_dataset(
         val_set,
         numpy_files_loc,
-        augmentation_params=None, # no augmentation on validation set
         transform=val_transform
     )
     dataloader_validation = torch.utils.data.DataLoader(dataset_validation, **data_loader_params)

@@ -8,7 +8,7 @@ TESTING:
 
 MODEL:
   # CHANGE THIS TO WHERE YOU STORED THE TRAINED MODEL WEIGHTS
-  PATH_TO_MODEL: /home/gillesv/PycharmProjects/lightweight_segmentation/src/experiments/lightweight_unet/trained/lowest_val_dice.pth
+  PATH_TO_MODEL: /home/gillesv/PycharmProjects/lightweight_segmentation/src/experiments/lightweight_unet/HUNT4_a2c_a4c/lowest_val_dice.pth
   # the following parameters must be the same as the ones used during training
   INPUT_SHAPE: [1,256,256]
   DEEP_SUPERVISION: True
@@ -21,6 +21,6 @@ OUT_DIR: "" # specify this if you want to save the predictions to a directory.
 
 # path to the directory containing the data. See documentation of test.py for more information on the
 # expected structure of this directory
-# See /home/gillesv/data/lightweight_segmentation/preprocessing_output/CAMUS_cv1 for an example the desired structure
+# See /home/gillesv/data/lightweight_segmentation/datasets/HUNT4_a2c_a4c for an example the desired structure
 # CHANGE THIS TO WHERE YOU STORED YOUR DATASET IN THE CORRECT FOLDER STRUCTURE (see readme)
-DATA_DIR: '/home/gillesv/data/lightweight_segmentation/preprocessing_output/CAMUS_cv1'
+DATA_DIR: '/home/gillesv/data/lightweight_segmentation/datasets/HUNT4_a2c_a4c'

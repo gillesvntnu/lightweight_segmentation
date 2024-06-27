@@ -47,12 +47,20 @@ Your data should be in the following format:
 dataset_folder
 ├── numpy_files
 │   ├── patient1
-│   │   ├── frame.npy
+│   │   ├── frame1.npy
+│   │   ├── frame2.npy
+│   │   ├── ...
+│   ├── patient2
+│   ├── ...
 ├── splits
 │   ├── test.txt
 │   ├── train.txt
 │   ├── val.txt
 ```
+Where each frame.npy is a numpy array of shape (2, depth, width) where the first
+channel is the image and the second channel is the ground truth segmentation mask.
+The files train.txt, val.txt and test.txt contain the names of the patients that should be used for 
+training, validation and testing respectively, with each line containing the name of one patient.
 See 
 [/home/gillesv/data/lightweight_segmentation/preprocessing_output/CAMUS_cv1](/home/gillesv/data/lightweight_segmentation/preprocessing_output/CAMUS_cv1)
 on cius-compute for an example.

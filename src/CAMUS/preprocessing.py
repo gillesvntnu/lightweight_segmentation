@@ -6,7 +6,7 @@ import numpy as np
 import src.utils
 import sys
 import src.CAMUS.CONST_CAMUS
-from src.utils import text_to_set
+from src.utils import text_to_set, save_splits
 import src.CONST
 
 def preprocess(config_loc):
@@ -16,25 +16,8 @@ def preprocess(config_loc):
         The location of the configuration file.
     """
     config = yaml.load(open(config_loc), Loader=yaml.loader.SafeLoader)
-    if config['DATASET_TYPE'] == 'CAMUS':
-        print('Converting CAMUS data to numpy format..')
-        convert_camus_dataset_to_numpy(config)
-
-
-def save_splits(splits, out_loc):
-    """
-    Save the splits to a file
-    :param splits: dict
-        A dictionary with the split names as keys and the split as values, e.g.
-        {'train': ['patient1', 'patient2',...], 'val': ['patient3',...], 'test': ['patient4',...]}
-    """
-    if not os.path.exists(out_loc):
-        os.makedirs(out_loc)
-    for split_name, split in splits.items():
-        split_loc = os.path.join(out_loc, split_name)
-        with open(split_loc+'.txt', 'w') as f:
-            for patient in split:
-                f.write(patient + '\n')
+    print('Converting CAMUS data to numpy format..')
+    convert_camus_dataset_to_numpy(config)
 
 
 ### CAMUS specific functions ###
@@ -83,22 +66,20 @@ def convert_camus_dataset_to_numpy(config):
     Each file contains the patient names, 1 per line, for the corresponding split
     :param config: dict
         The configuration dictionary. It should have the following keys:
-        - 'CAMUS': dict
-            - 'DATA_LOCATION': str,
-                the location of the CAMUS data
-            - 'SPLITS_LOCATION': str,
-                the location of the CAMUS splits
-            - 'SPLIT_NB': int,
-                the split number to use
+        - 'DATA_LOCATION': str,
+            the location of the CAMUS data
+        - 'SPLITS_LOCATION': str,
+            the location of the CAMUS splits
+        - 'SPLIT_NB': int,
+            the split number to use
         - 'PREPROCESSING_OUT_LOC': str,
             the location to save the output,
-            relative to CONST.DATA_DIR
     """
     splits_loc = os.path.join( src.CONST.PROJECT_ROOT, config['SPLITS_LOCATION'])
     splits= get_CAMUS_splits(config['SPLIT_NB'], splits_loc)
     train_set,val_set,test_set=splits
     splits_dict = {'train': train_set, 'val': val_set, 'test': test_set}
-    save_splits(splits_dict, os.path.join(config['PREPROCESSING_OUT_LOC'],'splits'))
+    save_splits(splits_dict, os.path.join(config['PREPROCESSING_OUT_LOC'], 'splits'))
     out_loc=os.path.join(config['PREPROCESSING_OUT_LOC'],'numpy_files')
     if not os.path.exists(out_loc):
         os.makedirs(out_loc)
@@ -118,7 +99,9 @@ def convert_camus_dataset_to_numpy(config):
                     gt_npy = nii_img_gt.get_fdata()
                     gt_resized=src.utils.resize_image(gt_npy,convert_to_png=False,annotation=True)
                     save_name=file_us_img.replace('.nii.gz','')
-                    img_gt_tuple = (us_resized, gt_resized)
+                    # the ultrasound image and segmentaitons are of shape (width, depth)
+                    # we transpose them to (depth, width)
+                    img_gt_tuple = (us_resized.T, gt_resized.T)
                     # save to patient subfolder
                     patient_folder = os.path.join(out_loc, patient)
                     if not os.path.exists(patient_folder):

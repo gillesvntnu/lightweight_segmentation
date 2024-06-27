@@ -10,30 +10,9 @@ import network
 import utils
 from tqdm import tqdm
 import queue
-from src.utils import keep_largest_component
+from src.utils import handle_queue
 from utils import get_loss
 from src.inference import LightWeightSegmentationModel
-
-
-def handle_queue(worst_queue, item, maxsize=15):
-    """
-    Handle the updates to the priority queue of worst predictions.
-    :param worst_queue: queue.PriorityQueue
-        the priority queue to update
-    :param item: tuple
-        the item to insert into the queue (loss, data)
-    :param maxsize: int, optional
-        the maximum size of the queue
-    """
-    if worst_queue.qsize() < maxsize:
-        worst_queue.put(item)
-    else:
-        # If the new item has a worse (higher) loss, add it to the queue
-        max_item = worst_queue.get()
-        if item[0] > max_item[0]:
-            worst_queue.put(item)
-        else:
-            worst_queue.put(max_item)
 
 
 def test(config_loc, verbose=True):
@@ -55,11 +34,10 @@ def test(config_loc, verbose=True):
         out_dir = "/".join(config["MODEL"]["PATH_TO_MODEL"].split("/")[:-1])
 
     out_dir = os.path.join(out_dir, "test_results")
-    plot_folder = os.path.join(out_dir, "plots")
     plot_folder_all = os.path.join(out_dir, "plots_all")
     plot_folder_box_plots = os.path.join(out_dir, "box_plots")
-    print("Saving results to: " + plot_folder)
-    os.makedirs(plot_folder, exist_ok=True)
+    print("Saving results to: " + out_dir)
+    os.makedirs(out_dir, exist_ok=True)
     os.makedirs(plot_folder_all, exist_ok=True)
     os.makedirs(plot_folder_box_plots, exist_ok=True)
 
@@ -159,9 +137,9 @@ def test(config_loc, verbose=True):
 
             # plot segmentation
             utils.plot_segmentation(
-                us_image=inputs[0].cpu().numpy().squeeze().T,
-                anno=labels[0].squeeze().T,
-                pred=predictions[0].squeeze().T,
+                us_image=inputs[0].cpu().numpy().squeeze(),
+                anno=labels[0].squeeze(),
+                pred=predictions[0].squeeze(),
                 sample_name=f"{file_name}.png",
                 dices=dices,
                 plot_folder=plot_folder_all,
@@ -174,7 +152,7 @@ def test(config_loc, verbose=True):
             # collect the worst cases
             handle_queue(
                 worst_queue,
-                (loss, (inputs[0].cpu().numpy(), labels[0], predictions[0], dices, i)),
+                (loss, (inputs[0].cpu().numpy(), labels[0], predictions[0], dices, file_name)),
             )
 
     # save the dice scores and hausdorf distances
@@ -228,7 +206,7 @@ def test(config_loc, verbose=True):
             f.write(", ".join(map(str, hausdorf)) + "\n")
 
     # save the worst predictions
-    utils.plot_worst_predictions(worst_queue, plot_folder)
+    utils.plot_worst_predictions(worst_queue, out_dir)
 
     # calculate average loss and dice scores
     avg_loss = np.mean(losses)
