@@ -240,7 +240,7 @@ def boxplot(metric_values, save_dir, title, ylabel, xticks, save_name, show=True
         plt.show()
 
 
-def plot_segmentation(us_image, anno, pred, sample_name, dices, plot_folder, show=False):
+def plot_segmentation(us_image, anno, pred, sample_name, dices=None, plot_folder=None, show=False):
     """
     Plot annotation and prediction of a single sample
     :param us_image: numpy array
@@ -251,11 +251,13 @@ def plot_segmentation(us_image, anno, pred, sample_name, dices, plot_folder, sho
         prediction by model
     :param sample_name: str
         name of sample
-    :param dices: list
+    :param dices: list, optional
         dice scores of prediction compared to annotation. This is a list with dice scores for each of the
         three class, i.e. [dice_lv,dice_myo,dice_la]
+        If not specified, no dice scores are shown
     :param plot_folder: str
         folder to save plot to
+        If not specified, plot is not saved
     :param show: bool, optional
         whether to show plot or not
         default is False
@@ -280,21 +282,23 @@ def plot_segmentation(us_image, anno, pred, sample_name, dices, plot_folder, sho
     # set titles
     ax[0].set_title("Annotation")
     ax[1].set_title("Prediction")
-    dice_lv, dice_myo, dice_la = dices
     # set main title
-    fig.suptitle(
-        f"{sample_name[:-4]}\n"
-        f" Dice LV: {np.round(dice_lv, 2)},"
-        f" Dice Myo: {np.round(dice_myo, 2)},"
-        f" Dice LA: {np.round(dice_la, 2)}"
-    )
+    if dices is not None:
+        dice_lv, dice_myo, dice_la = dices
+        fig.suptitle(
+            f"{sample_name[:-4]}\n"
+            f" Dice LV: {np.round(dice_lv, 2)},"
+            f" Dice Myo: {np.round(dice_myo, 2)},"
+            f" Dice LA: {np.round(dice_la, 2)}"
+        )
     # remove axis
     ax[0].axis("off")
     ax[1].axis("off")
     # remove whitespace
     fig.tight_layout()
     # save plot
-    fig.savefig(os.path.join(plot_folder, sample_name))
+    if plot_folder is not None:
+        fig.savefig(os.path.join(plot_folder, sample_name))
     if show:
         plt.show()
     plt.close(fig)

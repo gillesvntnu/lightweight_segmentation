@@ -3,6 +3,7 @@ from utils import keep_largest_component
 import network
 import numpy as np
 import skimage
+import matplotlib.pyplot as plt
 
 class LightWeightSegmentationModel(torch.nn.Module):
     """
@@ -109,20 +110,34 @@ if __name__ == "__main__":
 
     # sample from CAMUS
     sample_path = \
-        '/home/gillesv/data/lightweight_segmentation/preprocessing_output/cv1/numpy_files/patient0001/patient0001_2CH_ED.npy'
-
-    input_shape = (1,256,256)  # Assuming input is grayscale image with shape (1, height, width)
-    model = network.lightweight_unet(input_shape)
+        '/home/gillesv/data/lightweight_segmentation/preprocessing_output/CAMUS_cv1/numpy_files/patient0002/patient0002_2CH_ED.npy'
+    # The sample has form (us_image, anno) where us_image is the ultrasound image and anno is the segmentation mask
 
     # load trained model
+    input_shape = (1,256,256)  # Input is grayscale image with shape (1, width, depth)
+    model = network.lightweight_unet(input_shape)
     model.load_state_dict(torch.load(trained_model_path))
-
     seg_model = LightWeightSegmentationModel(model, input_shape)
-    # create random batch of images as numpy array
-    x = np.load(sample_path)
-    predictions = seg_model.predict_batch(x)
-    print(predictions.shape)
 
+    # load sample
+    x,y = np.load(sample_path) # x is of shape (256,256), y is of shape (256,256)
+    # add channel dimension to x
+    x = np.expand_dims(x, axis=0)
+
+    # predict the segmentation
+    predictions = seg_model.predict_batch(x)
+
+    # plot the segmentation
+    import utils
+    # the ultrasound image and segmentaitons are of shape (width, depth)
+    # we transpose them to (depth, width) for plotting
+    utils.plot_segmentation(
+        us_image=x[0].T,
+        anno=y.T,
+        pred=predictions[0].squeeze().T,
+        sample_name="sample.png",
+        show=True
+    )
 
 
 
