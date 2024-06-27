@@ -3,8 +3,8 @@ from medpy.metric.binary import hd, hd95
 import matplotlib.pyplot as plt
 import os
 from PIL import Image
+from scipy.ndimage import label
 from skimage.transform import resize
-import utils
 import torch
 import torch.nn as nn
 import sys
@@ -59,6 +59,46 @@ def resize_image(
         return numpy_image_resized
 
 #### evaluation utils ####
+
+def keep_largest_component(segmentation):
+    """
+    Keep only the largest connected component for each class in the segmentation.
+    :param segmentation: np.array
+        the segmentation mask with shape (1, width, height)
+    :return: np.array
+        the segmentation mask with only the largest connected component for each class.
+        The output has the same shape as the input, i.e. (1, width, height)
+    """
+    # Assuming segmentation is a 2D numpy array with integer class labels
+    output_segmentation = np.zeros_like(segmentation)
+
+    # Get unique class labels, ignoring the background (assuming it's labeled as 0)
+    class_labels = np.unique(segmentation)[1:]  # Skip 0 if it's the background label
+
+    for class_label in class_labels:
+        # Create a binary mask for the current class
+        class_mask = segmentation == class_label
+
+        # Perform connected component labeling
+        labeled_array, num_features = label(class_mask)
+
+        # Skip if no features are found for the class
+        if num_features == 0:
+            continue
+
+        # Find the largest component
+        largest_component_size = 0
+        largest_component_label = 0
+        for i in range(1, num_features + 1):  # Component labels are 1-indexed
+            component_size = np.sum(labeled_array == i)
+            if component_size > largest_component_size:
+                largest_component_size = component_size
+                largest_component_label = i
+
+        # Keep only the largest component for this class in the output segmentation
+        output_segmentation[labeled_array == largest_component_label] = class_label
+
+    return output_segmentation
 
 def dice_score(seg, gt, labels=None):
     """
@@ -223,14 +263,14 @@ def plot_segmentation(us_image, anno, pred, sample_name, dices, plot_folder, sho
     # plot anno and pred
     fig, ax = plt.subplots(1, 2)
     # visualization paints the segmentation on top of the ultrasound image
-    visual_anno = utils.create_visualization(
+    visual_anno = create_visualization(
         us_image,
         anno,
         labels=[1, 2, 3],
         colors=np.array([(1, 0, 0), (0, 1, 0), (0, 0, 1)]),
     )
     ax[0].imshow(visual_anno)
-    visual_pred = utils.create_visualization(
+    visual_pred = create_visualization(
         us_image,
         pred,
         labels=[1, 2, 3],
@@ -974,23 +1014,23 @@ def get_loss(loss_name, device='cpu', verbose=True):
         The number of parameters depends on the loss function
     """
     if loss_name == "DICE":
-        loss_fn = utils.get_dice_loss_fn(
+        loss_fn = get_dice_loss_fn(
             device=device, one_hot=True, nb_classes=4, include_bg=False
         )
     elif loss_name == "DICE_WEIGHTED":
-        loss_fn = utils.get_weighted_dice_loss_fn(
+        loss_fn = get_weighted_dice_loss_fn(
             class_weights=[1, 1, 1], device=device
         )
     elif loss_name == "DICE&CE":
-        loss_fn = utils.get_dice_ce_loss_fn(
+        loss_fn = get_dice_ce_loss_fn(
             device=device, one_hot=True, nb_classes=4, include_bg=False
         )
     elif loss_name == "DICE_DS":
-        loss_fn = utils.get_dice_deep_supervision_loss_fn(
+        loss_fn = get_dice_deep_supervision_loss_fn(
             device=device, one_hot=True, nb_classes=4, include_bg=False
         )
     elif loss_name == "DICE&CE_DS":
-        loss_fn = utils.get_dice_ce_deep_supervision_loss_fn(
+        loss_fn = get_dice_ce_deep_supervision_loss_fn(
             device=device, one_hot=True, nb_classes=4, include_bg=False
         )
     else:
@@ -998,3 +1038,6 @@ def get_loss(loss_name, device='cpu', verbose=True):
     if verbose:
         print(f"Using loss function: {loss_name}")
     return loss_fn
+
+
+

@@ -365,11 +365,12 @@ def train(config_loc, verbose=True):
 
         print(
             f'Epoch {epoch + 1}/{config["TRAINING"]["NB_EPOCHS"]} train loss: {round(train_loss,3)}, '
-            f'per class: {round(validation_loss,3)}'
+            f'validation loss: {round(validation_loss,3)}'
         )
         print(
             f'Epoch {epoch + 1}/{config["TRAINING"]["NB_EPOCHS"]} train dice: {round(train_dice,3)}, '
-            f'per class: {round(validation_dice,3)} {[round(x, 3) for x in validation_dice_per_class]}'
+            f'validation dice: {round(validation_dice,3)},  '
+            f'per class: {[round(x, 3) for x in validation_dice_per_class]}'
         )
         writer.flush()
 

@@ -28,7 +28,7 @@ def make_batch(x):
     :return: input tensor with batch dimension and boolean indicating whether input was already a batch or not.
     """
     if len(x.shape) == 3:
-        x = x.unsqueeze(0)
+        x = x.unsqueeze(1)
         batch = False
     elif len(x.shape) == 4:
         batch = True
@@ -172,7 +172,7 @@ class lightweight_unet(nn.Module):
         use_deep_supervision=True,
         nb_classes=4,
         final_activation="softmax",
-        verbose=True
+        verbose=False
     ):
         super(lightweight_unet, self).__init__()
 

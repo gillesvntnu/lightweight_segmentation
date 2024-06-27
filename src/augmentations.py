@@ -2,9 +2,6 @@ import albumentations as A
 from albumentations.pytorch import ToTensorV2
 
 
-
-
-
 def get_augmentations(augmentation_parameters):
     """
     Get the augmentations to apply to the images

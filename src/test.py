@@ -5,18 +5,14 @@ import sys
 import CONST
 import numpy as np
 from torch.utils.data import DataLoader
-import src.preprocessing
 from data_loading import data_loader
 import network
-import albumentations as A
-from albumentations.pytorch import ToTensorV2
 import utils
 from tqdm import tqdm
 import queue
-from scipy.ndimage import label, binary_dilation, binary_erosion
-
-from src import augmentations
+from src.utils import keep_largest_component
 from utils import get_loss
+from src.inference import LightWeightSegmentationModel
 
 
 def handle_queue(worst_queue, item, maxsize=15):
@@ -38,47 +34,6 @@ def handle_queue(worst_queue, item, maxsize=15):
             worst_queue.put(item)
         else:
             worst_queue.put(max_item)
-
-
-def keep_largest_component(segmentation):
-    """
-    Keep only the largest connected component for each class in the segmentation.
-    :param segmentation: np.array
-        the segmentation mask with shape (1, width, height)
-    :return: np.array
-        the segmentation mask with only the largest connected component for each class.
-        The output has the same shape as the input, i.e. (1, width, height)
-    """
-    # Assuming segmentation is a 2D numpy array with integer class labels
-    output_segmentation = np.zeros_like(segmentation)
-
-    # Get unique class labels, ignoring the background (assuming it's labeled as 0)
-    class_labels = np.unique(segmentation)[1:]  # Skip 0 if it's the background label
-
-    for class_label in class_labels:
-        # Create a binary mask for the current class
-        class_mask = segmentation == class_label
-
-        # Perform connected component labeling
-        labeled_array, num_features = label(class_mask)
-
-        # Skip if no features are found for the class
-        if num_features == 0:
-            continue
-
-        # Find the largest component
-        largest_component_size = 0
-        largest_component_label = 0
-        for i in range(1, num_features + 1):  # Component labels are 1-indexed
-            component_size = np.sum(labeled_array == i)
-            if component_size > largest_component_size:
-                largest_component_size = component_size
-                largest_component_label = i
-
-        # Keep only the largest component for this class in the output segmentation
-        output_segmentation[labeled_array == largest_component_label] = class_label
-
-    return output_segmentation
 
 
 def test(config_loc, verbose=True):
@@ -119,15 +74,15 @@ def test(config_loc, verbose=True):
     # load model
     model.load_state_dict(torch.load(config["MODEL"]["PATH_TO_MODEL"], map_location=device))
     model = model.to(device)
-    model.eval()
 
     # print number of parameters
     if verbose:
         total_nb_params = sum(p.numel() for p in model.parameters())
         print("total number of params: " + str(total_nb_params))
 
-    # set up transform for inference (resize etc)
-    transform = augmentations.get_augmentations(config["INFERENCE_TRANSFORM"])
+    # set up model for inference
+    seg_model = LightWeightSegmentationModel(model, config["MODEL"]["INPUT_SHAPE"])
+
 
     # set up data loader
     data_loader_params = config["TESTING"]["DATA_LOADER_PARAMS"]
@@ -137,7 +92,7 @@ def test(config_loc, verbose=True):
     dataset_test = data_loader.Labeled_dataset(
         test_set,
         numpy_files_loc,
-        transform=transform,
+        transform=None,
         return_file_loc=True,
     )
     dataloader_test = torch.utils.data.DataLoader(dataset_test, **data_loader_params)
@@ -166,24 +121,15 @@ def test(config_loc, verbose=True):
             # We need to convert them to one-hot in the format (width, height, num_classes)
             labels_one_hot = utils.convert_to_one_hot(labels, device=device)
 
-            output = model(inputs)
-            if type(output) is tuple:
-                # this means the model uses deep supervision and returns a list of outputs
-                # The first output is the final output
-                predictions = output[0]
-            else:
-                predictions = output
+            preprocessed_inputs = seg_model.preprocess_batch_input(inputs)
+            predictions = seg_model.run_inference_batch(preprocessed_inputs)
 
             loss = loss_fn(predictions, labels_one_hot).cpu().numpy()
 
-            # get actual predictions from output
-            predictions = torch.argmax(predictions, dim=1)
-            predictions = predictions.cpu().numpy()
             labels = labels.cpu().numpy().astype(int)
 
             # post-processing
-            # only keep the largest connected component for each class
-            predictions = keep_largest_component(predictions)
+            predictions = seg_model.post_process_batch_output(predictions)
 
             # dice scores
             dice_lv = utils.dice_score(predictions.squeeze(), labels.squeeze(), [1])
