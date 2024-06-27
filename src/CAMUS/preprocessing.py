@@ -3,11 +3,11 @@ import os
 from tqdm import tqdm
 import yaml
 import numpy as np
-import utils
+import src.utils
 import sys
-import CONST
+import src.CAMUS.CONST_CAMUS
 from src.utils import text_to_set
-
+import src.CONST
 
 def preprocess(config_loc):
     """
@@ -19,8 +19,6 @@ def preprocess(config_loc):
     if config['DATASET_TYPE'] == 'CAMUS':
         print('Converting CAMUS data to numpy format..')
         convert_camus_dataset_to_numpy(config)
-    else:
-        raise NotImplementedError('TODO: only CAMUS dataset is supported for now.')
 
 
 def save_splits(splits, out_loc):
@@ -62,12 +60,6 @@ def get_CAMUS_splits(split_nb, splits_loc):
     train_set = text_to_set(train_loc)
     val_set = text_to_set(val_loc)
     test_set = text_to_set(test_loc)
-    # print(f"\n{val_set}\n\n{test_set}\n")
-    # # print the number of samples that are the same in the validation and test set
-    # print(
-    #     "Number of samples that are the same in the validation and test set:",
-    #     len(train_set.intersection(test_set)),
-    # )
     return train_set, val_set, test_set
 
 def convert_camus_dataset_to_numpy(config):
@@ -102,16 +94,16 @@ def convert_camus_dataset_to_numpy(config):
             the location to save the output,
             relative to CONST.DATA_DIR
     """
-    splits_loc = os.path.join(CONST.PROJECT_ROOT, config['CAMUS']['SPLITS_LOCATION'])
-    splits= get_CAMUS_splits(config['CAMUS']['SPLIT_NB'], splits_loc)
+    splits_loc = os.path.join( src.CONST.PROJECT_ROOT, config['SPLITS_LOCATION'])
+    splits= get_CAMUS_splits(config['SPLIT_NB'], splits_loc)
     train_set,val_set,test_set=splits
     splits_dict = {'train': train_set, 'val': val_set, 'test': test_set}
-    save_splits(splits_dict, os.path.join(CONST.DATA_DIR, config['PREPROCESSING_OUT_LOC'],'splits'))
-    out_loc=os.path.join(CONST.DATA_DIR,config['PREPROCESSING_OUT_LOC'],'numpy_files')
+    save_splits(splits_dict, os.path.join(config['PREPROCESSING_OUT_LOC'],'splits'))
+    out_loc=os.path.join(config['PREPROCESSING_OUT_LOC'],'numpy_files')
     if not os.path.exists(out_loc):
         os.makedirs(out_loc)
-    for patient in tqdm(os.listdir(config['CAMUS']['DATA_LOCATION'])):
-        patient_path=os.path.join(config['CAMUS']['DATA_LOCATION'],patient)
+    for patient in tqdm(os.listdir(config['DATA_LOCATION'])):
+        patient_path=os.path.join(config['DATA_LOCATION'],patient)
         if os.path.isdir(patient_path):
             for file in os.listdir(patient_path):
                 file_path=os.path.join(patient_path,file)
@@ -121,13 +113,13 @@ def convert_camus_dataset_to_numpy(config):
                     file_us_img=file.replace('_gt','')
                     nii_img_us  = nib.load(os.path.join(patient_path,file_us_img))
                     us_npy = nii_img_us.get_fdata()
-                    us_resized=utils.resize_image(us_npy,convert_to_png=False)
+                    us_resized=src.utils.resize_image(us_npy,convert_to_png=False)
                     nii_img_gt  = nib.load(file_path)
                     gt_npy = nii_img_gt.get_fdata()
-                    gt_resized=utils.resize_image(gt_npy,convert_to_png=False,annotation=True)
+                    gt_resized=src.utils.resize_image(gt_npy,convert_to_png=False,annotation=True)
                     save_name=file_us_img.replace('.nii.gz','')
                     img_gt_tuple = (us_resized, gt_resized)
-                    # save to trainval folder in patient subfolder
+                    # save to patient subfolder
                     patient_folder = os.path.join(out_loc, patient)
                     if not os.path.exists(patient_folder):
                         os.makedirs(patient_folder)
@@ -139,7 +131,7 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         config_loc = sys.argv[1]
     else:
-        config_loc = CONST.DEFAULT_PREPROCESSING_CONFIG_LOC
+        config_loc = src.CAMUS.CONST_CAMUS.DEFAULT_PREPROCESSING_CAMUS_CONFIG_LOC
 
     preprocess(config_loc)
 

@@ -1,0 +1,31 @@
+# Image size to used in the model
+IMG_SIZE: 256,256
+
+DATASET_TYPE: CAMUS # 'CAMUS' or 'OTHER'
+
+# Split number of CAMUS dataset to use
+SPLIT_NB: 1
+
+# path to the CAMUS dataset subgroups info defining the CAMUS cross validation splits,
+# relative to CONST.PROJECT_ROOT
+SPLITS_LOCATION: 'src/CAMUS/local_data/subgroups_CAMUS'
+
+
+
+# CHANGE THIS TO WHERE YOU DOWNLOADED THE CAMUS DATASET
+# path to the CAMUS dataset in nifti format
+DATA_LOCATION: '/home/gillesv/data/CAMUS/database_nifti'  # CHANGE THIS TO WHERE YOU DOWNLOADED THE CAMUS DATASET
+
+# CHANGE THIS TO WHERE YOU WANT TO STORE THE PREPROCESSED DATA
+# output path for where to store the preprocessed data
+PREPROCESSING_OUT_LOC: '/home/gillesv/data/lightweight_segmentation/preprocessing_output/CAMUS_cv1/'
+
+
+
+
+
+
+
+
+
+

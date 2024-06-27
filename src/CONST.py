@@ -7,10 +7,6 @@ this_file_path = os.path.dirname(os.path.realpath(__file__))
 EXPERIMENTS_DIR = os.path.join(this_file_path, "experiments")
 
 
-DEFAULT_PREPROCESSING_CONFIG_LOC = os.path.join(
-    this_file_path, "configs/preprocessing/default_preprocessing_config.yaml"
-)
-
 DEFAULT_TRAINING_CONFIG_LOC = os.path.join(
     this_file_path, "configs/training/default_training_config.yaml"
 )
