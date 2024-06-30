@@ -64,8 +64,8 @@ class LightWeightSegmentationModel(torch.nn.Module):
             if len(batch_input.shape) == 3:
                 # Convert to batch of size 1
                 batch_input = np.expand_dims(batch_input, axis=0)
-            elif len(x.shape) != 4:
-                raise ValueError(f"Unsupported input shape: {x.shape}")
+            elif len(batch_input.shape) != 4:
+                raise ValueError(f"Unsupported input shape: {batch_input.shape}")
             if batch_input.shape[1:] != self.input_shape:
                 raise ValueError(f"Input shape should be {self.input_shape}, got {batch_input.shape[1:]}")
             # resize the images to the input shape of the model
