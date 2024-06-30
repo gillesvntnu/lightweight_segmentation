@@ -107,6 +107,10 @@ The testing script will create a 'test_results' folder in the same directory as 
 
 
 
+## Questions
+
+For questions, please contact 
+Gilles Van De Vyver at [gilles.van.de.vyver@ntnu.no](gilles.van.de.vyver@ntnu.no).
 
 
 
