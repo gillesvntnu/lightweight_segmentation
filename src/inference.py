@@ -122,13 +122,11 @@ if __name__ == "__main__":
 
     # plot the segmentation
     import utils
-    # the ultrasound image and segmentaitons are of shape (width, depth)
-    # we transpose them to (depth, width) for plotting
+    # the ultrasound image and segmentaitons are of shape (depth, width)
     utils.plot_segmentation(
         us_image=x[0],
         anno=y,
         pred=predictions[0].squeeze(),
-        sample_name="sample.png",
         show=True
     )
 
