@@ -240,7 +240,7 @@ def boxplot(metric_values, save_dir, title, ylabel, xticks, save_name, show=True
         plt.show()
 
 
-def plot_segmentation(us_image, anno, pred, sample_name, dices=None, plot_folder=None, show=False):
+def plot_segmentation(us_image, anno, pred, sample_name='sample.png', dices=None, plot_folder=None, show=False):
     """
     Plot annotation and prediction of a single sample
     :param us_image: numpy array
@@ -249,7 +249,7 @@ def plot_segmentation(us_image, anno, pred, sample_name, dices=None, plot_folder
         annotation of segmentation masks ('ground truth')
     :param pred: numpy array
         prediction by model
-    :param sample_name: str
+    :param sample_name: str, optional
         name of sample
     :param dices: list, optional
         dice scores of prediction compared to annotation. This is a list with dice scores for each of the
