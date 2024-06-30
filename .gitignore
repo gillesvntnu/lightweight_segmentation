@@ -7,3 +7,5 @@ src/experiments/
 src/__pycache__/
 
 src/HUNT4/
+
+src/onnx_models/

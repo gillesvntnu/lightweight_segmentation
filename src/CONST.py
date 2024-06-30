@@ -19,6 +19,10 @@ DEFAULT_TESTING_CONFIG_LOC = os.path.join(
     this_file_path, "configs/testing/default_testing_config.yaml"
 )
 
+DEFAULT_EXPORT_CONFIG_LOC = os.path.join(
+    this_file_path, "configs/export/default_export_config.yaml"
+)
+
 DATA_DIR = '/home/gillesv/data/lightweight_segmentation'
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))

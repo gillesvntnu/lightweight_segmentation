@@ -1,0 +1,4 @@
+# The paths below point to a trained model on the cius-compute server.
+WEIGHTS_LOC: '/home/gillesv/PycharmProjects/lightweight_segmentation/src/experiments/lightweight_unet/HUNT4_a2c_a4c/lowest_val_dice.pth'
+TRAIN_CONFIG_LOC: '/home/gillesv/PycharmProjects/lightweight_segmentation/src/experiments/lightweight_unet/HUNT4_a2c_a4c/config.yaml'
+EXPORT_LOC: '/home/gillesv/PycharmProjects/lightweight_segmentation/src/onnx_models/HUNT4_a2c_a4c_all.onnx'
