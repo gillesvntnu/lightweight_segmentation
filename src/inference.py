@@ -2,10 +2,8 @@ import torch
 from utils import keep_largest_component
 import network
 import numpy as np
-import skimage
-import matplotlib.pyplot as plt
 
-class LightWeightSegmentationModel(torch.nn.Module):
+class LightWeightSegmentationModel:
     """
     A wrapper class for a segmentation model that can be used for inference.
     The model should be a torch.nn.Module with a forward method that takes a batch of images as input and returns
