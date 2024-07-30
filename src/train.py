@@ -207,9 +207,6 @@ def train(config, verbose=True):
         print(f'Running training with config: {config}')
 
 
-    # load config
-    config = yaml.load(open(config_loc), Loader=yaml.loader.SafeLoader)
-
     # load splits
     splits_loc = os.path.join(config['DATA_DIR'],'splits')
     splits = utils.load_splits(splits_loc)
@@ -405,6 +402,7 @@ if __name__ == "__main__":
                     'LOSS': 'DICE&CE_DS',
                     'OPTIMIZER': 'Adam',
                     'LR': 0.001,
+                    'PATIENCE': 20,
                     'DATA_LOADER_PARAMS':
                         {'batch_size': 32, 'shuffle': True, 'num_workers': 8}},
         'AUGMENTATIONS_TRAIN': {
@@ -424,5 +422,5 @@ if __name__ == "__main__":
             'ACTIVATION_INTER_LAYER': 'mish'},
         'DATA_DIR': '/home/gillesv/data/lightweight_segmentation/datasets/HUNT4_a2c_a4c'
     }
-    train(config_loc)
+    train(debug_config)
     '''
