@@ -15,13 +15,17 @@ from utils import get_loss
 from src.inference import LightWeightSegmentationModel
 
 
-def test(config_loc, verbose=True):
+def test(config, verbose=True):
+    # if config is a string, it is the location of the config file
+    if isinstance(config, str):
+        config_loc = config
+        if verbose:
+            print("Loading testing config file: " + config_loc)
+        # load config
+        with open(config_loc, "r") as file:
+            config = yaml.load(file, Loader=yaml.loader.SafeLoader)
     if verbose:
-        print("Running testing with config file: " + config_loc)
-
-    # load config
-    with open(config_loc, "r") as file:
-        config = yaml.load(file, Loader=yaml.loader.SafeLoader)
+        print(f'Running testing with config: {config}')
 
     # set up GPU
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -217,6 +221,7 @@ def test(config_loc, verbose=True):
 
 
 
+
 if __name__ == "__main__":
     # load config file if provided, otherwise use default
     if len(sys.argv) > 1:
@@ -227,3 +232,30 @@ if __name__ == "__main__":
     print(f"Average loss: {round(loss, 3)}")
     print(f"Average dice score: {round(dice, 3)}")
     print(f"Dice scores: [LV, MYO, LA] = {[round(x, 3) for x in dice_per_class]}")
+
+
+
+    # alternatively to supplying a path to a config, you can run the test function with a config dictionary (example below)
+    '''
+    debug_config = {
+        'TESTING': {'NB_EPOCHS': 100,
+                    'LOSS': 'DICE',
+                    'OPTIMIZER': 'Adam',
+                    'LR': 0.001,
+                    'DATA_LOADER_PARAMS':
+                        {'batch_size': 1, 'shuffle': False, 'num_workers': 8}},
+        'MODEL': {
+            'PATH_TO_MODEL': '/home/gillesv/PycharmProjects/lightweight_segmentation/src/experiments/lightweight_unet/HUNT4_a2c_a4c/lowest_val_dice.pth',
+            'INPUT_SHAPE': [1, 256, 256],
+            'DEEP_SUPERVISION': True,
+            'NORMALIZE_INPUT': True,
+            'NORMALIZE_INTER_LAYER': True,
+            'ACTIVATION_INTER_LAYER': 'mish'},
+        'OUT_DIR': None,
+        'DATA_DIR': '/home/gillesv/data/lightweight_segmentation/datasets/HUNT4_a2c_a4c'
+    }
+
+    loss, dice, dice_per_class = test(debug_config)
+    '''
+
+

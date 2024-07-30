@@ -131,7 +131,7 @@ def run_model(dataloader, optimizer, model, loss_fn, train=True, device=None, ds
     return np.mean(losses), np.mean(dice_scores), np.mean(dice_scores, axis=0)
 
 
-def train(config_loc, verbose=True):
+def train(config, verbose=True):
     """
     Train the model according to the given config file. The function will create a new subdirectory
     in the experiments directory at the location specified in the config file. In this subdirectory,
@@ -163,8 +163,8 @@ def train(config_loc, verbose=True):
     train.txt, val.txt, test.txt are the text files containing the patient ids for the train, validation and test sets.
     These files contain the patient names, 1 per line, for the corresponding split.
     See /home/gillesv/data/lightweight_segmentation/preprocessing_output/cv1 for an example the desired structure
-    :param config_loc: str,
-        path to the config file
+    :param config: str or dict,
+        path to the config file or the configuration dictionary itself
         See the default config file at src/configs/training/default_training_config.yaml for an example
         The config file should contain the following
         - DATA_DIR: str,
@@ -196,8 +196,16 @@ def train(config_loc, verbose=True):
     :param verbose: bool,
         whether to print progress or not
     """
+    if isinstance(config, str):
+        config_loc = config
+        if verbose:
+            print("Loading training config file: " + config_loc)
+        # load config
+        with open(config_loc, "r") as file:
+            config = yaml.load(file, Loader=yaml.loader.SafeLoader)
     if verbose:
-        print("Running training with config file: " + config_loc)
+        print(f'Running training with config: {config}')
+
 
     # load config
     config = yaml.load(open(config_loc), Loader=yaml.loader.SafeLoader)
@@ -379,6 +387,9 @@ def train(config_loc, verbose=True):
 
 
 if __name__ == "__main__":
+    # set cuda visible devices to 1
+    os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+
     # load config file if provided, otherwise use default
     if len(sys.argv) > 1:
         config_loc = sys.argv[1]
@@ -386,3 +397,32 @@ if __name__ == "__main__":
         config_loc = CONST.DEFAULT_TRAINING_CONFIG_LOC
 
     train(config_loc)
+
+    # alternatively to supplying a path to a config, you can run the train function with a config dictionary (example below)
+    '''
+    debug_config = {
+        'TRAINING': {'NB_EPOCHS': 100,
+                    'LOSS': 'DICE&CE_DS',
+                    'OPTIMIZER': 'Adam',
+                    'LR': 0.001,
+                    'DATA_LOADER_PARAMS':
+                        {'batch_size': 32, 'shuffle': True, 'num_workers': 8}},
+        'AUGMENTATIONS_TRAIN': {
+            'RESIZE': [256, 256],
+            'SHIFT_LIMIT': 0.1,
+            'SCALE_LIMIT': [-0.2, 0.1],
+            'ROTATE_LIMIT': 10,
+            'P_SHIFT_SCALE_ROTATE': 0.5},
+        'AUGMENTATIONS_VAL': {
+            'RESIZE': [256, 256]},
+        'REL_OUT_DIR': 'lightweight_unet',
+        'MODEL': {
+            'INPUT_SHAPE': [1, 256, 256],
+            'DEEP_SUPERVISION': True,
+            'NORMALIZE_INPUT': True,
+            'NORMALIZE_INTER_LAYER': True,
+            'ACTIVATION_INTER_LAYER': 'mish'},
+        'DATA_DIR': '/home/gillesv/data/lightweight_segmentation/datasets/HUNT4_a2c_a4c'
+    }
+    train(config_loc)
+    '''
