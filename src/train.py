@@ -351,6 +351,12 @@ def train(config, verbose=True):
         # Early stopping
         if validation_dice > current_best_dice:
             current_best_dice = validation_dice
+            print(f"New best model, saving..")
+            torch.save(
+                model.state_dict(),
+                str(output_dir) + "/lowest_val_dice.pth",
+            )
+
             epochs_without_improvement = 0
         else:
             epochs_without_improvement += 1
@@ -359,12 +365,6 @@ def train(config, verbose=True):
                 f"Early stopping after {patience} epochs without improvement. Best validation dice: {current_best_dice}"
             )
             break
-        else:
-            print(f"New best model, saving..")
-            torch.save(
-                model.state_dict(),
-                str(output_dir) + "/lowest_val_dice.pth",
-            )
 
         print(
             f'Epoch {epoch + 1}/{config["TRAINING"]["NB_EPOCHS"]} train loss: {round(train_loss,3)}, '
@@ -384,9 +384,6 @@ def train(config, verbose=True):
 
 
 if __name__ == "__main__":
-    # set cuda visible devices to 1
-    os.environ["CUDA_VISIBLE_DEVICES"] = "1"
-
     # load config file if provided, otherwise use default
     if len(sys.argv) > 1:
         config_loc = sys.argv[1]
