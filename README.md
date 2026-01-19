@@ -70,9 +70,6 @@ Where each frame.npy is a numpy array of shape (2, depth, width) where the first
 channel is the image and the second channel is the ground truth segmentation mask.
 The files train.txt, val.txt and test.txt contain the names of the patients that should be used for 
 training, validation and testing respectively, with each line containing the name of one patient.
-See 
-[/home/gillesv/data/lightweight_segmentation/preprocessing_output/HUNT4_a2c_a4c_](/home/gillesv/data/lightweight_segmentation/preprocessing_output/HUNT4_a2c_a4c)
-on cius-compute for an example.
 
 You then need to specify the path to the dataset_folder in the DATA_DIR attribute in the 
 config you use for training.
@@ -107,10 +104,15 @@ The testing script will create a 'test_results' folder in the same directory as 
 
 
 
-## Questions
+## Contact
 
-For questions, please contact 
-Gilles Van De Vyver at [gilles.van.de.vyver@ntnu.no](gilles.van.de.vyver@ntnu.no).
+Developer: <br />
+[https://gillesvandevyver.com/](https://gillesvandevyver.com/)
+gilles.van.de.vyver@ntnu.no
+
+Management: <br />
+lasse.lovstakken@ntnu.no <br />
+erik.smistad@ntnu.no <br />
 
 
 
