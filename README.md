@@ -3,10 +3,11 @@
 This repository contains documented code of a lightweight U-Net model for ultrasound image segmentation.
 This work is the result of the master thesis and paper of Anders Kjelsrud, 
 and you should cite his paper if you use this code.
+```
 Kjelsrud, Anders, et al. "Lightweight image segmentation for echocardiography."
 2025 IEEE International Ultrasonics Symposium (IUS). IEEE, 2025.
 [https://ieeexplore.ieee.org/document/11201818](https://ieeexplore.ieee.org/document/11201818).
-
+```
 The original GitHub repository of Anders can be found here:
 [https://github.com/Anderzz/masters-thesis](https://github.com/Anderzz/masters-thesis).
 This repository contains a cleaned up and documented version of the code.
