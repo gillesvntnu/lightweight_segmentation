@@ -1,13 +1,11 @@
 # lightweight_unet
 
 This repository contains documented code of a lightweight U-Net model for ultrasound image segmentation.
-This work is the result of the master thesis of Anders Kjelsrud, 
-and you should cite his thesis if you use this code.
-At the time of writing his thesis is not yet public. You can find a pdf copy in this repository:
-[masters_thesis_Anders_Kjelsrud.pdf](masters_thesis_Anders_Kjelsrud.pdf)
-Table 4.11 on page 70 is particularly interesting: the number of anatomical outliers for a model trained on
-HUNT4 and tested on CAMUS is halved compared to the baseline U-Net 1. Section 4.11 on page 65 described the
-final model.
+This work is the result of the master thesis and paper of Anders Kjelsrud, 
+and you should cite his paper if you use this code.
+Kjelsrud, Anders, et al. "Lightweight image segmentation for echocardiography."
+2025 IEEE International Ultrasonics Symposium (IUS). IEEE, 2025.
+[https://ieeexplore.ieee.org/document/11201818](https://ieeexplore.ieee.org/document/11201818).
 
 The original GitHub repository of Anders can be found here:
 [https://github.com/Anderzz/masters-thesis](https://github.com/Anderzz/masters-thesis).
@@ -25,7 +23,7 @@ Isensee, Fabian, et al. "nnU-Net: a self-configuring method for deep learning-ba
 Nature methods 18.2 (2021): 203-211.
 ```
 The result is a lightweight model that performs as well as nnU-Net on CAMUS and HUNT4,
-but with an order of magnitude less parameters.
+but with an order of magnitude less parameters and several orders less training time.
 
 
 ## Installation
@@ -106,9 +104,9 @@ The testing script will create a 'test_results' folder in the same directory as 
 
 ## Contact
 
-Developer: <br />
+Developers: <br />
 [https://gillesvandevyver.com/](https://gillesvandevyver.com/)
-gilles.van.de.vyver@ntnu.no
+anders.kjelsrud@intility.no
 
 Management: <br />
 lasse.lovstakken@ntnu.no <br />
