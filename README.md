@@ -1,4 +1,4 @@
-# lightweight_unet
+# Lightweight image segmentation for echocardiography
 
 This repository contains documented code of a lightweight U-Net model for ultrasound image segmentation.
 This work is the result of the master thesis and paper of Anders Kjelsrud, 
