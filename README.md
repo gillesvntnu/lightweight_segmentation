@@ -106,7 +106,7 @@ The testing script will create a 'test_results' folder in the same directory as 
 ## Contact
 
 Developers: <br />
-[https://gillesvandevyver.com/](https://gillesvandevyver.com/)
+[https://gillesvandevyver.com/](https://gillesvandevyver.com/) <br />
 anders.kjelsrud@intility.no
 
 Management: <br />
